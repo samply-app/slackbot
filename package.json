@@ -1,0 +1,12 @@
+{
+  "name": "slackbot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/samply-app/slackbot.git",
+  "author": "Eric Schirtzinger <eschirtzinger@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.1",
+    "@actions/github": "^2.0.1"
+  }
+}

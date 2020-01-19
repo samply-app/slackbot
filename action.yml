@@ -1,0 +1,17 @@
+name: 'SlackBot'
+description: 'This action lets you post messages to Slack. You can use common templates or send raw JSON.'
+inputs:
+  message:  # id of input
+    description: 'Message text'
+    required: true
+    default: '*No Message*'
+  slack-token:  # id of input
+    description: 'Slack Bot Token'
+    required: true
+    default: 'ERROR: No Token'
+outputs:
+  ok:
+    description: 'The "ok" status of the Slack API request'
+runs:
+  using: 'node12'
+  main: 'index.js'
