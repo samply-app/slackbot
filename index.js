@@ -13,6 +13,7 @@ try {
     console.log(github.context);
     const senderLogin = payload.sender.login;
     const senderURL = payload.sender.html_url; 
+    const senderAvatar = payload.sender.avatar_url;
     const commitURL = payload.head_commit.url;
     // Action Input
     const template = core.getInput('template');
@@ -56,7 +57,12 @@ try {
                     type: "section",
                     text: {
                         type: "mrkdwn",
-                        text: message
+                        text: `${message}\n- <${senderURL}|*${senderLogin}*>`,
+                    },
+                    accessory: {
+                        type: "image",
+                        image_url: senderAvatar,
+                        alt_text: `${senderLogin} profile photo`
                     }
                 }
             ];
