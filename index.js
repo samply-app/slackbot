@@ -28,12 +28,14 @@ try {
     const repositoryURL = payload.repository.html_url;
     const branch = payload.ref.substring(payload.ref.lastIndexOf('/') + 1);
     // --- Action Input ---
-    // Required
-    const message = core.getInput('message');
+    // Required    
     const slackToken = core.getInput('slack-token');
     // Optional
+    const message = core.getInput('message');
     const template = core.getInput('template');    
     const channel = core.getInput('channel') || "#general";
+    const url = core.getInput('url');
+    const urlText = core.getInput('urlText');
     // Template: status
     const status = (core.getInput('status') || '').toLowerCase();
     console.log({
@@ -42,8 +44,6 @@ try {
         channel,
         status
     });
-    console.log(colors, colors[status]);
-    
     // Slack message content
     let slackBody;
     switch (template) {
@@ -55,7 +55,7 @@ try {
         case templates.status:            
             const emoji = status === 'success' ? ':tada:' :
                           (status === 'failure' ? ':upside_down_face:' : '');
-            const notificationText = `${emoji} ${capitalize(status)}: ${workflow} (${repositoryName})`;
+            const notificationText = message || `${emoji} ${capitalize(status)}: ${workflow} (${repositoryName})`;
             const bodyText = `*${capitalize(status)}*: <${repositoryURL}|${repositoryName}>`
             slackBody = {
                 channel,
@@ -77,7 +77,7 @@ try {
                                 type: "section",
                                 text: {
                                     type: "mrkdwn",
-                                    text: `*${workflow}* (${branch})`
+                                    text: `*${workflow}* (${branch})${message ? '\n'+ message : ''}`
                                 }
                             },
                             {
@@ -110,6 +110,47 @@ try {
             };
             break;
         default:
+            slackBody = {
+                channel,
+                text: message,
+                blocks: [
+                    {
+                        type: "section",
+                        text: {
+                            type: "mrkdwn",
+                            text: message
+                        }
+                    }
+                ],
+                attachments: [
+                    {
+                        color: colors[status] || colors.default,
+                        blocks: [
+                            {
+                                type: "section",
+                                text: {
+                                    type: "mrkdwn",
+                                    text: `*<${url}|${urlText}>*`
+                                }
+                            },
+                            {
+                                type: "context",
+                                elements: [
+                                    {
+                                        type: "image",
+                                        image_url: senderAvatar,
+                                        alt_text: `${senderLogin} profile photo`
+                                    },
+                                    {
+                                        type: "mrkdwn",
+                                        text: `Triggered by *${eventName}* event from <${senderURL}|*${senderLogin}*>`
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            };
             break;
     }
     tellSlack(JSON.stringify(slackBody), slackToken);
