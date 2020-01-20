@@ -1,22 +1,23 @@
 name: 'SlackBot'
 description: 'This action lets you post messages to Slack. You can use common templates or send raw JSON.'
 inputs:
-  template:
-    description: 'Template for the type of message you would like sent'
-    required: false
-    default: 'none'
   message:
     description: 'Message text'
     required: true
     default: 'Error: No Message'
-  channel:
-    description: 'Channel to send message on. Default #general'
-    required: false
-    default: ''
   slack-token:
     description: 'Slack Bot Token'
     required: true
-    default: 'ERROR: No Token'
+  template:
+    description: 'Template for the type of message you would like sent'
+    required: false
+    default: 'none'
+  channel:
+    description: 'Channel to send message on. Default #general'
+    required: false
+  status:
+    description: 'Status of job. ( success, failure, cancelled ) Not case-sensitive'
+    required: false
 outputs:
   ok:
     description: 'The "ok" status of the Slack API request'
