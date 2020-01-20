@@ -12,7 +12,8 @@ try {
     const payload = github.context.payload;
     console.log(github.context);
     const senderLogin = payload.sender.login;
-    const senderURL = payload.sender.url;    
+    const senderURL = payload.sender.html_url; 
+    const commitURL = payload.head_commit.url;
     // Action Input
     const template = core.getInput('template');
     const inputMessage = core.getInput('message');
@@ -22,22 +23,29 @@ try {
     let message = inputMessage;
     let blocks; // Slack
     switch (template) {
-        case templates.none:
+        case templates.none || undefined:
             console.log("No template");
             blocks = [
                 {
                     type: "section",
                     text: {
                         type: "mrkdwn",
-                        text: message
+                        text: `"${message}" - <${senderURL}|*${senderLogin}*>`
                     }
                 },
                 {
-                    type: "section",
-                    text: {
-                        type: "mrkdwn",
-                        text: `<${senderURL}|${senderLogin}>`
-                    }
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "View Commit",
+                                "emoji": true
+                            },
+                            "url": commitURL
+                        }
+                    ]
                 }
             ]
             break;
@@ -61,7 +69,6 @@ try {
         blocks,
     }
     tellSlack(JSON.stringify(slackBody), slackToken);
-    // console.log(`The event payload: ${payload}`);
 } catch (error) {
     core.setFailed(error.message);
 }
@@ -78,6 +85,6 @@ function tellSlack(body, token) {
     };
     request(options, function (error, response) {
         if (error) throw new Error(error);
-        console.log(response.body);
+        if (!response.body.ok) throw new Error(response.body.error);
     });
 }
