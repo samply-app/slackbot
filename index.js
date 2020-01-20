@@ -9,10 +9,10 @@ const templates = {
 
 try {
     // Github Payload
-    const payload = JSON.stringify(github.context.payload, undefined, 2);
-    const senderLogin = payload.sender.login;
-    const senderURL = payload.sender.url;
+    const payload = github.context.payload;
     console.log(github.context);
+    const senderLogin = payload.sender.login;
+    const senderURL = payload.sender.url;    
     // Action Input
     const template = core.getInput('template');
     const inputMessage = core.getInput('message');
