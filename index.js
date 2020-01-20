@@ -2,40 +2,65 @@ const request = require('request');
 const core = require('@actions/core');
 const github = require('@actions/github');
 
+const templates = {
+    none: 'none',
+    ciStatus: 'ci-status',
+};
+
 try {
-    // Get inputs
-    const message = core.getInput('message') || "Fallback";
-    const slackToken = core.getInput('slack-token');   
-    // const slackToken = "xoxb-570934843381-899781945906-SuPQ46qAmej8RKwdKUDJYLXN"
-    const slackBody = {
-        channel: "GS4751SRE",
-        text: message,
-        blocks: [
-            {
-                type: "section",
-                text: {
-                    type: "mrkdwn",
-                    text: message
+    // Github Payload
+    const payload = JSON.stringify(github.context.payload, undefined, 2);
+    const senderLogin = payload.sender.login;
+    const senderURL = payload.sender.url;
+    console.log(github.context);
+    // Action Input
+    const template = core.getInput('template');
+    const inputMessage = core.getInput('message');
+    const channel = core.getInput('channel') || "#general";
+    const slackToken = core.getInput('slack-token');
+    // Slack message content
+    let message = inputMessage;
+    let blocks; // Slack
+    switch (template) {
+        case templates.none:
+            console.log("No template");
+            blocks = [
+                {
+                    type: "section",
+                    text: {
+                        type: "mrkdwn",
+                        text: message
+                    }
+                },
+                {
+                    type: "section",
+                    text: {
+                        type: "mrkdwn",
+                        text: `<${senderURL}|${senderLogin}>`
+                    }
                 }
-            },
-            // {
-            //     type: "actions",
-            //     elements: [
-            //         {
-            //             type: "button",
-            //             text: {
-            //                 type: "plain_text",
-            //                 text: "Review 🔧",
-            //                 emoji: true
-            //             },
-            //             url: "https://samply.app"
-            //         }
-            //     ]
-            // }
-        ]
+            ]
+            break;
+        default:
+            console.log("Default");
+            blocks = [
+                {
+                    type: "section",
+                    text: {
+                        type: "mrkdwn",
+                        text: message
+                    }
+                }
+            ];
+            break;
+    }
+
+    const slackBody = {
+        channel,
+        text: message,
+        blocks,
     }
     tellSlack(JSON.stringify(slackBody), slackToken);
-    const payload = JSON.stringify(github.context.payload, undefined, 2);
     // console.log(`The event payload: ${payload}`);
 } catch (error) {
     core.setFailed(error.message);
