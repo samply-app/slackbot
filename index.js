@@ -90,20 +90,20 @@ try {
                             {
                               type: "divider"
                             },
-                            {
-                                type: "context",
-                                elements: [
-                                    {
-                                        type: "image",
-                                        image_url: senderAvatar,
-                                        alt_text: `${senderLogin} profile photo`
-                                    },
-                                    {
-                                        type: "mrkdwn",
-                                        text: `Triggered by *${eventName}* event from <${senderURL}|*${senderLogin}*>`
-                                    }
-                                ]
-                            }
+                            // {
+                            //     type: "context",
+                            //     elements: [
+                            //         {
+                            //             type: "image",
+                            //             image_url: senderAvatar,
+                            //             alt_text: `${senderLogin} profile photo`
+                            //         },
+                            //         {
+                            //             type: "mrkdwn",
+                            //             text: `Triggered by *${eventName}* event from <${senderURL}|*${senderLogin}*>`
+                            //         }
+                            //     ]
+                            // }
                         ]
                     }
                 ]
@@ -133,20 +133,20 @@ try {
                                     text: `*<${url}|${urlText}>*`
                                 }
                             },
-                            {
-                                type: "context",
-                                elements: [
-                                    {
-                                        type: "image",
-                                        image_url: senderAvatar,
-                                        alt_text: `${senderLogin} profile photo`
-                                    },
-                                    {
-                                        type: "mrkdwn",
-                                        text: `Triggered by *${eventName}* event from <${senderURL}|*${senderLogin}*>`
-                                    }
-                                ]
-                            }
+                            // {
+                            //     type: "context",
+                            //     elements: [
+                            //         {
+                            //             type: "image",
+                            //             image_url: senderAvatar,
+                            //             alt_text: `${senderLogin} profile photo`
+                            //         },
+                            //         {
+                            //             type: "mrkdwn",
+                            //             text: `Triggered by *${eventName}* event from <${senderURL}|*${senderLogin}*>`
+                            //         }
+                            //     ]
+                            // }
                         ]
                     }
                 ]
