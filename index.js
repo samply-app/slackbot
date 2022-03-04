@@ -163,11 +163,11 @@ function getContextString() {
       const commitURL = ghPayload.head_commit.url;
       const commitHash = ghPayload.head_commit.id.substring(0, 7);
 
-      return `<@${getSlackID(github.context.actor)}> · *${eventName}* · <${commitURL}|${commitHash}> on *${branch}*`;
+      return `<@${getSlackID(github.context.actor)}> · *${eventName}* <${commitURL}|${commitHash}> on *${branch}*`;
     }
     case 'pull_request': {
       const action = ghPayload.action;
-      return `<@${getSlackID(github.context.actor)}> · *${eventName}* ${action}`;
+      return `<@${getSlackID(github.context.actor)}> · *${eventName}* · ${action}`;
     }
     default:
       return 'Missing context...'
