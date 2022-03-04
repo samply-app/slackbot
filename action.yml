@@ -7,6 +7,35 @@ inputs:
   channel:
     description: 'Channel to send message on. Default #devops'
     required: false
+  actions:
+    description: A JSON array representing actions to be displayed { text, url, style }
+    required: false
+  #### Deprecated inputs
+  slack-token:
+    description: 'Slack Bot Token'
+    required: false
+    deprecationMessage: Use <token> instead
+  message:
+    description: 'Message text. Supports emoji (:tada:)'
+    required: false
+    deprecationMessage: Deprecated...
+  template:
+    description: 'Template for the type of message you would like sent'
+    required: false
+    default: 'none'
+    deprecationMessage: Deprecated...
+  url:
+    description: 'Clickable URL'
+    required: false
+    deprecationMessage: Deprecated...
+  urlText:
+    description: 'Call to action for URL'
+    required: false
+    deprecationMessage: Deprecated...
+  status:
+    description: 'Status of job. ( success, failure, cancelled ) Not case-sensitive'
+    required: false
+    deprecationMessage: Deprecated...
 outputs:
   ok:
     description: 'The "ok" status of the Slack API request'

@@ -3,10 +3,12 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 // Inputs
-const TOKEN = core.getInput('token');
+const TOKEN = core.getInput('token') || core.getInput('slack-token'); // slack-token is deprecated
 const CHANNEL = core.getInput('channel') || "#devops"
 
-console.log(github.context);
+const _rawActions = core.getInput('actions');
+const ACTIONS = _rawActions ? JSON.parse(_rawActions) : [];
+console.log(ACTIONS);
 
 /**
  * Maps GitHub username to Slack member ID
@@ -75,69 +77,77 @@ function getContextBlock() {
   //
 }
 
+function getBody(channel, text) {
+  return {
+    channel,
+    text,
+    blocks: []
+  }
+}
+
 const notificationText = ':tada: Integration successful'
 
-postMessage({
-  channel: CHANNEL,
-  text: notificationText,
-  blocks: [
-    // Message body
+const body = getBody(CHANNEL, notificationText);
+
+// Message body
+body.blocks.push({
+  "type": "section",
+  "text": {
+    "type": "mrkdwn",
+    "text": `*${notificationText}*\n\n_${commitMessage}_`,
+  }
+})
+
+// Workflow specifc context
+body.blocks.push({
+  "type": "context",
+  "elements": [
     {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": `*${notificationText}*\n_${commitMessage}_`,
-      }
-    },
-    // Workflow specifc context
-    {
-      "type": "context",
-      "elements": [
-        {
-          "type": "mrkdwn",
-          "text": `${workflow} · <${commitURL}|${commitHash}>`
-        }
-      ]
-    },
-    // Context    
-    {
-      "type": "context",
-      "elements": [
-        {
-          "type": "image",
-          "image_url": senderAvatar,
-          "alt_text": `${senderLogin} avatar`
-        },
-        {
-          "type": "mrkdwn",
-          "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* on *${branch}*`
-        }
-      ]
-    },
-    // Actions
-    {
-      "type": "actions",
-      "elements": [
-        {
-          "type": "button",
-          "style": "primary",
-          "text": {
-            "type": "plain_text",
-            "text": "Production preview",
-            "emoji": true
-          },
-          "url": "https://github.com"
-        },
-        {
-          "type": "button",
-          "text": {
-            "type": "plain_text",
-            "text": "Staging",
-            "emoji": true
-          },
-          "url": "https://github.com"
-        }
-      ]
+      "type": "mrkdwn",
+      "text": `${workflow} · <${commitURL}|${commitHash}>`
     }
   ]
 })
+
+// Context
+body.blocks.push({
+  "type": "context",
+  "elements": [
+    {
+      "type": "image",
+      "image_url": senderAvatar,
+      "alt_text": `${senderLogin} avatar`
+    },
+    {
+      "type": "mrkdwn",
+      "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* on *${branch}*`
+    }
+  ]
+})
+
+body.blocks.push({
+  "type": "actions",
+  "elements": [
+    {
+      "type": "button",
+      "style": "primary",
+      "text": {
+        "type": "plain_text",
+        "text": "Production preview",
+        "emoji": true
+      },
+      "url": "https://github.com"
+    },
+    {
+      "type": "button",
+      "text": {
+        "type": "plain_text",
+        "text": "Staging",
+        "emoji": true
+      },
+      "url": "https://github.com"
+    }
+  ]
+})
+
+postMessage(body)
