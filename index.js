@@ -15,7 +15,7 @@ function postMessage(body) {
       'Content-Type': 'application/json; charset=utf-8',
       'Authorization': `Bearer ${TOKEN}`
     },
-    body,
+    body: JSON.stringify(body),
   };
   // Make request
   request(options, (error, response) => {
