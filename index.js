@@ -110,14 +110,25 @@ const notificationText = MESSAGE;
 
 const body = getBody(CHANNEL, notificationText);
 
-// Message body
+// Message
+if (MESSAGE) {
+  body.blocks.push({
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": `*${notificationText}*`,
+    }
+  })
+}
+
+// Optional body based on context
 if (eventName === 'push') {
   const commitMessage = ghPayload.head_commit.message;
   body.blocks.push({
     "type": "section",
     "text": {
       "type": "mrkdwn",
-      "text": `*${notificationText}*\n\n${commitMessage}`,
+      "text": commitMessage,
     }
   })
 }
@@ -140,7 +151,7 @@ function getContextString() {
     }
     case 'pull_request': {
       const title = ghPayload.pull_request.title;
-      const url = ghPayload.html_url;
+      const url = ghPayload.pull_request.html_url;
       return `<@${getSlackID(github.context.actor)}> · *${eventName}* <${url}|${title}>`;
     }
     default:
