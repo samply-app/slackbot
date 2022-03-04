@@ -80,6 +80,31 @@ postMessage({
         "emoji": true
       }
     },
+    // Workflow specifc
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": `*${workflowName}* · <${commitURL}|${commitHash}>`
+        }
+      ]
+    },
+    // Context    
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "image",
+          "image_url": senderAvatar,
+          "alt_text": `${senderLogin} avatar`
+        },
+        {
+          "type": "mrkdwn",
+          "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* to <github.com | main>`
+        }
+      ]
+    },
     // Actions
     {
       "type": "actions",
@@ -102,21 +127,6 @@ postMessage({
             "emoji": true
           },
           "url": "https://github.com"
-        }
-      ]
-    },
-    // Context
-    {
-      "type": "context",
-      "elements": [
-        {
-          "type": "image",
-          "image_url": senderAvatar,
-          "alt_text": `${senderLogin} avatar`
-        },
-        {
-          "type": "mrkdwn",
-          "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* to <github.com | main> · <${commitURL}|${commitHash}>`
         }
       ]
     }
