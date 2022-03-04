@@ -6,6 +6,16 @@ const github = require('@actions/github');
 const TOKEN = core.getInput('token');
 const CHANNEL = core.getInput('channel') || "#devops"
 
+console.log(github.context);
+console.log(github.context.payload);
+
+function getSlackID(username) {
+  switch (username) {
+    case 'eschirtz': return 'UGSRY8DLK'      
+    default: return ''
+  }
+}
+
 function postMessage(body) {
   // Configure API request
   const options = {
@@ -22,8 +32,7 @@ function postMessage(body) {
     if (error) throw new Error(error);
     // Read API response
     const body = JSON.parse(response.body);
-    if (!body.ok) {
-      console.log('Slack API response:', body);
+    if (!body.ok) {       
       throw new Error(response.body.error);
     }
   });
@@ -48,7 +57,7 @@ postMessage({
       "elements": [
         {
           "type": "mrkdwn",
-          "text": "*push* to <github.com | main> · <github.com|bc9e816> by <@U02SK1SM0G2>"
+          "text": `*push* to <github.com | main> · <github.com|bc9e816> by <@${getSlackID(github.context.actor)}>`
         }
       ]
     },
