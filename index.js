@@ -17,6 +17,9 @@ const colors = {
 try {
     // Github Payload
     const payload = github.context.payload;
+    console.log("payload:");
+    console.log(payload);
+    console.log(payload.eventName, payload.event_name);
     const {eventName, workflow} = github.context;
     const senderLogin = payload.sender.login;
     const senderURL = payload.sender.html_url; 
