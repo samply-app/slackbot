@@ -41,6 +41,7 @@ function postMessage(body) {
     // Read API response
     const body = JSON.parse(response.body);
     if (!body.ok) {
+      console.error(response.body.error);
       throw new Error(response.body.error);
     }
   });
@@ -73,20 +74,7 @@ const commitHash = ghPayload.head_commit.id.substring(0, 7);
  * @returns 
  */
 function getContextBlock() {
-  return {
-    "type": "context",
-    "elements": [
-      {
-        "type": "image",
-        "image_url": senderAvatar,
-        "alt_text": `${senderLogin} avatar`
-      },
-      {
-        "type": "mrkdwn",
-        "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* on *${branch}*`
-      }
-    ]
-  }
+//
 }
 
 postMessage({
@@ -122,7 +110,20 @@ postMessage({
       ]
     },
     // Context    
-    getContextBlock(),
+     {
+      "type": "context",
+      "elements": [
+        {
+          "type": "image",
+          "image_url": senderAvatar,
+          "alt_text": `${senderLogin} avatar`
+        },
+        {
+          "type": "mrkdwn",
+          "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* on *${branch}*`
+        }
+      ]
+    },
     // Actions
     {
       "type": "actions",
