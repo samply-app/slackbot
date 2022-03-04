@@ -4,7 +4,7 @@ const github = require('@actions/github');
 
 // Inputs
 const TOKEN = core.getInput('token');
-const CHANNEL = core.getInput('channel') ?? "#devops"
+const CHANNEL = core.getInput('channel') || "#devops"
 
 function postMessage(body) {
   // Configure API request
