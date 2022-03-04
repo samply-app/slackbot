@@ -53,7 +53,8 @@ const ghPayload = github.context.payload;
 
 // Workflow info
 const eventName = ghContext.eventName;
-const workflowName = ghContext.workflowName
+const workflow = ghContext.workflow;
+const branch = ghPayload.ref.substring(ghPayload.ref.lastIndexOf('/') + 1);
 
 // User information
 const senderLogin = ghPayload.sender.login
@@ -86,7 +87,7 @@ postMessage({
       "elements": [
         {
           "type": "mrkdwn",
-          "text": `*${workflowName}* · <${commitURL}|${commitHash}>`
+          "text": `*${workflow}* · <${commitURL}|${commitHash}>`
         }
       ]
     },
@@ -101,7 +102,7 @@ postMessage({
         },
         {
           "type": "mrkdwn",
-          "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* to <github.com | main>`
+          "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* on ${branch}`
         }
       ]
     },
