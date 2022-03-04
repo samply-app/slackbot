@@ -66,22 +66,52 @@ const commitURL = ghPayload.head_commit.url;
 const commitMessage = ghPayload.head_commit.message;
 const commitHash = ghPayload.head_commit.id.substring(0, 7);
 
-console.log(senderLogin, senderAvatar, senderURL);
+
+/**
+ * Generates a generic context block.
+ * Should work for all triggers and workflows.
+ * @returns 
+ */
+function getContextBlock() {
+  return {
+    "type": "context",
+    "elements": [
+      {
+        "type": "image",
+        "image_url": senderAvatar,
+        "alt_text": `${senderLogin} avatar`
+      },
+      {
+        "type": "mrkdwn",
+        "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* on *${branch}*`
+      }
+    ]
+  }
+}
 
 postMessage({
   channel: CHANNEL,
-  text: ":tada: Built a better Slackbot",
+  text: `:tada: Integration successful (${commitMessage})`,
   blocks: [
-    // Notification text
+    // Header message
     {
       "type": "section",
       "text": {
         "type": "plain_text",
-        "text": `:tada: ${commitMessage}`,
+        "text": `:tada: Integration successful`,
         "emoji": true
       }
     },
-    // Workflow specifc
+    // Message body
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": `_${commitMessage}_`,
+        "emoji": true
+      } 
+    },
+    // Workflow specifc context
     {
       "type": "context",
       "elements": [
@@ -92,20 +122,7 @@ postMessage({
       ]
     },
     // Context    
-    {
-      "type": "context",
-      "elements": [
-        {
-          "type": "image",
-          "image_url": senderAvatar,
-          "alt_text": `${senderLogin} avatar`
-        },
-        {
-          "type": "mrkdwn",
-          "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* on ${branch}`
-        }
-      ]
-    },
+    getContextBlock(),
     // Actions
     {
       "type": "actions",
