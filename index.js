@@ -7,7 +7,7 @@ const TOKEN = core.getInput('token') || core.getInput('slack-token'); // slack-t
 const CHANNEL = core.getInput('channel') || "#devops"
 
 const _rawActions = core.getInput('actions');
-const ACTIONS = _rawActions ? JSON.parse(_rawActions) : [];
+const ACTIONS = _rawActions ? JSON.parse(_rawActions) : null;
 console.log(ACTIONS);
 
 /**
@@ -94,7 +94,7 @@ body.blocks.push({
   "type": "section",
   "text": {
     "type": "mrkdwn",
-    "text": `*${notificationText}*\n\n_${commitMessage}_`,
+    "text": `*${notificationText}*\n\n${commitMessage}`,
   }
 })
 
@@ -125,29 +125,28 @@ body.blocks.push({
   ]
 })
 
-body.blocks.push({
-  "type": "actions",
-  "elements": [
-    {
-      "type": "button",
-      "style": "primary",
-      "text": {
-        "type": "plain_text",
-        "text": "Production preview",
-        "emoji": true
+if (ACTIONS) {
+  const elements = [];
+  for (let i = 0; i < ACTIONS.length; i += 1) {
+    const action = ACTIONS[i];
+    const button = {
+      type: "button",
+      text: {
+        type: "plain_text",
+        text: action.text,
+        emoji: true
       },
-      "url": "https://github.com"
-    },
-    {
-      "type": "button",
-      "text": {
-        "type": "plain_text",
-        "text": "Staging",
-        "emoji": true
-      },
-      "url": "https://github.com"
-    }
-  ]
-})
+      url: action.url
+    };
+    if (action.style) button.style = action.style;
+    elements.push(button);
+  }
+  body.blocks.push({
+    type: "actions",
+    elements
+  });
+}
+
+
 
 postMessage(body)
