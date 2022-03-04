@@ -40,21 +40,30 @@ function postMessage(body) {
     if (error) throw new Error(error);
     // Read API response
     const body = JSON.parse(response.body);
-    if (!body.ok) {       
+    if (!body.ok) {
       throw new Error(response.body.error);
     }
   });
 }
 
 
-// Pull off data
+/**** EXTRACT DATA ****/
 const ghContext = github.context;
 const ghPayload = github.context.payload;
+
+// Workflow info
+const eventName = ghContext.eventName;
+const workflowName = ghContext.workflowName
 
 // User information
 const senderLogin = ghPayload.sender.login
 const senderAvatar = ghPayload.sender.avatar_url;
 const senderURL = ghPayload.sender.html_url;
+
+// Commit info (this may not exist)
+const commitURL = ghPayload.head_commit.url;
+const commitMessage = ghPayload.head_commit.message;
+const commitHash = ghPayload.head_commit.id.substring(0, 7);
 
 console.log(senderLogin, senderAvatar, senderURL);
 
@@ -67,49 +76,49 @@ postMessage({
       "type": "section",
       "text": {
         "type": "plain_text",
-        "text": ":tada: Built a better Slackbot",
+        "text": `:tada: ${commitMessage}`,
         "emoji": true
       }
+    },
+    // Actions
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "style": "primary",
+          "text": {
+            "type": "plain_text",
+            "text": "Production preview",
+            "emoji": true
+          },
+          "url": "https://github.com"
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Staging",
+            "emoji": true
+          },
+          "url": "https://github.com"
+        }
+      ]
     },
     // Context
     {
       "type": "context",
       "elements": [
         {
-					"type": "image",
-					"image_url": senderAvatar,
-					"alt_text": `${senderLogin} avatar`
-				},
+          "type": "image",
+          "image_url": senderAvatar,
+          "alt_text": `${senderLogin} avatar`
+        },
         {
           "type": "mrkdwn",
-          "text": `<@${getSlackID(github.context.actor)}> · *push* to <github.com | main> · <github.com|bc9e816>`
+          "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* to <github.com | main> · <${commitURL}|${commitHash}>`
         }
       ]
-    },
-    // Actions
-    {
-			"type": "actions",
-			"elements": [
-				{
-					"type": "button",
-					"style": "primary",
-					"text": {
-						"type": "plain_text",
-						"text": "Production preview",
-						"emoji": true
-					},
-					"url": "https://github.com"
-				},
-        {
-					"type": "button",
-					"text": {
-						"type": "plain_text",
-						"text": "Staging",
-						"emoji": true
-					},
-					"url": "https://github.com"
-				}
-			]
-		}
+    }
   ]
 })
