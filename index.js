@@ -7,7 +7,6 @@ const TOKEN = core.getInput('token');
 const CHANNEL = core.getInput('channel') || "#devops"
 
 console.log(github.context);
-console.log(github.context.payload);
 
 /**
  * Maps GitHub username to Slack member ID
@@ -41,7 +40,8 @@ function postMessage(body) {
     // Read API response
     const body = JSON.parse(response.body);
     if (!body.ok) {
-      console.error(response.body.error);
+      console.log(response);
+      console.error(response.body);
       throw new Error(response.body.error);
     }
   });
@@ -83,7 +83,7 @@ postMessage({
   blocks: [
     // Header message
     {
-      "type": "section",
+      "type": "header",
       "text": {
         "type": "plain_text",
         "text": `:tada: Integration successful`,
