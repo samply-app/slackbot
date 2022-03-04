@@ -66,6 +66,23 @@ function getActionsBlock(actions) {
     if (action.style) button.style = action.style;
     elements.push(button);
   }
+  /**
+   * HACKY HACK!!!
+   * I was unable to figure out how to get the pull request's html url 
+   * from within the workflow file itself. So i'm just hacking it on to the front 
+   * of the actions array magically right here.
+   */  
+  if(eventName === 'pull_request') {
+    elements.unshift({
+      type: "button",
+      text: {
+        type: "plain_text",
+        text: "Review",
+        emoji: true
+      },
+      url: ghPayload.pull_request.html_url
+    })
+  }
   return {
     type: "actions",
     elements
