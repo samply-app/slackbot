@@ -7,6 +7,9 @@ inputs:
   channel:
     description: 'Channel to send message on. Default #devops'
     required: false
+  message:
+    description: 'Primary message content. Supports emoji (:tada:)'
+    required: false
   actions:
     description: A JSON array representing actions to be displayed { text, url, style }
     required: false
@@ -15,10 +18,6 @@ inputs:
     description: 'Slack Bot Token'
     required: false
     deprecationMessage: Use <token> instead
-  message:
-    description: 'Message text. Supports emoji (:tada:)'
-    required: false
-    deprecationMessage: Deprecated...
   template:
     description: 'Template for the type of message you would like sent'
     required: false
