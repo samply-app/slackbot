@@ -9,9 +9,17 @@ const CHANNEL = core.getInput('channel') || "#devops"
 console.log(github.context);
 console.log(github.context.payload);
 
+/**
+ * Maps GitHub username to Slack member ID
+ * @param {string} username 
+ * @returns 
+ */
 function getSlackID(username) {
-  switch (username) {
-    case 'eschirtz': return 'UGSRY8DLK'      
+  switch (username.toLowerCase()) {
+    case 'eschirtz': return "UGSRY8DLK"
+    case 'jmswaney': return "UGSEAAD3M"
+    case 'matt-samply': return "U02BSR8MJ11"
+    case 'guitarpro1186': return "U02SK1SM0G2"
     default: return ''
   }
 }
@@ -38,6 +46,18 @@ function postMessage(body) {
   });
 }
 
+
+// Pull off data
+const ghContext = github.context;
+const ghPayload = github.context.payload;
+
+// User information
+const senderLogin = ghPayload.sender.login
+const senderAvatar = ghPayload.sender.avatar_url;
+const senderURL = ghPayload.sender.html_url;
+
+console.log(senderLogin, senderAvatar, senderURL);
+
 postMessage({
   channel: CHANNEL,
   text: ":tada: Built a better Slackbot",
@@ -56,8 +76,13 @@ postMessage({
       "type": "context",
       "elements": [
         {
+					"type": "image",
+					"image_url": senderAvatar,
+					"alt_text": `${senderLogin} avatar`
+				},
+        {
           "type": "mrkdwn",
-          "text": `*push* to <github.com | main> · <github.com|bc9e816> by <@${getSlackID(github.context.actor)}>`
+          "text": `<@${getSlackID(github.context.actor)}> · *push* to <github.com | main> · <github.com|bc9e816>`
         }
       ]
     },
@@ -70,7 +95,16 @@ postMessage({
 					"style": "primary",
 					"text": {
 						"type": "plain_text",
-						"text": "View production preview",
+						"text": "Production preview",
+						"emoji": true
+					},
+					"url": "https://github.com"
+				},
+        {
+					"type": "button",
+					"text": {
+						"type": "plain_text",
+						"text": "Staging",
 						"emoji": true
 					},
 					"url": "https://github.com"
