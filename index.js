@@ -40,8 +40,6 @@ function postMessage(body) {
     // Read API response
     const body = JSON.parse(response.body);
     if (!body.ok) {
-      console.log(response);
-      console.error(response.body);
       throw new Error(response.body.error);
     }
   });
@@ -96,7 +94,6 @@ postMessage({
       "text": {
         "type": "mrkdwn",
         "text": `_${commitMessage}_`,
-        "emoji": true
       } 
     },
     // Workflow specifc context
