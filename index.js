@@ -24,6 +24,7 @@ function postMessage(body, token) {
     // Read API response
     const body = JSON.parse(response.body);
     if (!body.ok) {
+    console.error(body.error, body);
       throw new Error(response.body.error);
     }
   });
@@ -147,6 +148,7 @@ if (eventName === 'push') {
       "text": ghPayload.pull_request.body,
     }
   })
+  ghPayload.pull_request.html_url
 }
 
 // Add workflow title
