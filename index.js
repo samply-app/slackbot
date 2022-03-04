@@ -131,6 +131,22 @@ if (eventName === 'push') {
       "text": commitMessage,
     }
   })
+} else if (eventName === 'pull_request') {
+  body.blocks.push({
+    "type": "header",
+    "text": {
+      "type": "plain_text",
+      "text": ghPayload.pull_request.title,
+      "emoji": true
+    }
+  })
+  body.blocks.push({
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": ghPayload.pull_request.body,
+    }
+  })
 }
 
 // Add workflow title
@@ -147,12 +163,11 @@ function getContextString() {
       const commitURL = ghPayload.head_commit.url;
       const commitHash = ghPayload.head_commit.id.substring(0, 7);
 
-      return `<@${getSlackID(github.context.actor)}> · *${eventName}* <${commitURL}|${commitHash}> on *${branch}*`;
+      return `<@${getSlackID(github.context.actor)}> · *${eventName}* · <${commitURL}|${commitHash}> on *${branch}*`;
     }
     case 'pull_request': {
-      const title = ghPayload.pull_request.title;
-      const url = ghPayload.pull_request.html_url;
-      return `<@${getSlackID(github.context.actor)}> · *${eventName}* <${url}|${title}>`;
+      const action = ghPayload.action;
+      return `<@${getSlackID(github.context.actor)}> · *${eventName}* ${action}`;
     }
     default:
       return 'Missing context...'
