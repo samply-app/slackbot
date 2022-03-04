@@ -72,29 +72,22 @@ const commitHash = ghPayload.head_commit.id.substring(0, 7);
  * @returns 
  */
 function getContextBlock() {
-//
+  //
 }
+
+const notificationText = ':tada: Integration successful'
 
 postMessage({
   channel: CHANNEL,
-  text: `:tada: Integration successful (${commitMessage})`,
+  text: notificationText,
   blocks: [
-    // Header message
-    {
-      "type": "header",
-      "text": {
-        "type": "plain_text",
-        "text": `:tada: Integration successful`,
-        "emoji": true
-      }
-    },
     // Message body
     {
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": `_${commitMessage}_`,
-      } 
+        "text": `*${notificationText}*\n_${commitMessage}_`,
+      }
     },
     // Workflow specifc context
     {
@@ -102,12 +95,12 @@ postMessage({
       "elements": [
         {
           "type": "mrkdwn",
-          "text": `*${workflow}* · <${commitURL}|${commitHash}>`
+          "text": `${workflow} · <${commitURL}|${commitHash}>`
         }
       ]
     },
     // Context    
-     {
+    {
       "type": "context",
       "elements": [
         {
