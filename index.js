@@ -8,7 +8,6 @@ const CHANNEL = core.getInput('channel') || "#devops"
 
 const _rawActions = core.getInput('actions');
 const ACTIONS = _rawActions ? JSON.parse(_rawActions) : null;
-console.log(ACTIONS);
 
 /**
  * Maps GitHub username to Slack member ID
@@ -51,6 +50,8 @@ function postMessage(body) {
 /**** EXTRACT DATA ****/
 const ghContext = github.context;
 const ghPayload = github.context.payload;
+
+console.log(ghContext);
 
 // Workflow info
 const eventName = ghContext.eventName;
@@ -109,7 +110,16 @@ body.blocks.push({
   ]
 })
 
-// Context
+// Event context
+function getContextString() {
+  switch (eventName) {
+    case 'push':
+      return `<@${getSlackID(github.context.actor)}> · *${eventName}* on *${branch}*`;  
+    default:
+      return 'Missing context...'
+  }
+}
+
 body.blocks.push({
   "type": "context",
   "elements": [
@@ -120,11 +130,12 @@ body.blocks.push({
     },
     {
       "type": "mrkdwn",
-      "text": `<@${getSlackID(github.context.actor)}> · *${eventName}* on *${branch}*`
+      "text": getContextString()
     }
   ]
 })
 
+/** If actions exist, add them in */
 if (ACTIONS) {
   const elements = [];
   for (let i = 0; i < ACTIONS.length; i += 1) {
@@ -146,7 +157,5 @@ if (ACTIONS) {
     elements
   });
 }
-
-
 
 postMessage(body)
