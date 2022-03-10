@@ -162,7 +162,7 @@ if (eventName === 'push') {
     "type": "section",
     "text": {
       "type": "mrkdwn",
-      "text": ghPayload.pull_request.body,
+      "text": ghPayload.pull_request.body || 'No description',
     }
   })
   ghPayload.pull_request.html_url
