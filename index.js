@@ -24,8 +24,8 @@ function postMessage(body, token) {
     // Read API response
     const body = JSON.parse(response.body);
     if (!body.ok) {
-    console.error(body.error, body);
-      throw new Error(response.body.error);
+      console.error(body.error, body);
+      // throw new Error(response.body.error);
     }
   });
 }
